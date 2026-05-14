@@ -6,29 +6,36 @@ import { HeroOverlay } from './HeroOverlay'
 export function ScrollHero() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [isIOS, setIsIOS] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    const ios =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-    setIsIOS(ios)
   }, [])
 
   useEffect(() => {
-    if (!mounted || isIOS) return
+    if (!mounted) return
     const video = videoRef.current
     if (!video) return
 
     video.load()
-    video.pause()
 
-    const handleLoaded = () => {
+    const onLoaded = () => {
       video.currentTime = 0
     }
-    video.addEventListener('loadedmetadata', handleLoaded)
+    video.addEventListener('loadedmetadata', onLoaded)
+
+    // iOS Safari blocks seeking until after a user-gesture play() call.
+    // We listen for the first touch and briefly play+pause to unlock seeking.
+    let unlocked = false
+    const unlock = () => {
+      if (unlocked) return
+      unlocked = true
+      video.play().then(() => {
+        video.pause()
+        video.currentTime = video.currentTime
+      }).catch(() => {})
+    }
+    window.addEventListener('touchstart', unlock, { once: true, passive: true })
 
     let cleanup: (() => void) | undefined
 
@@ -53,18 +60,17 @@ export function ScrollHero() {
         },
       })
 
-      cleanup = () => {
-        ScrollTrigger.getAll().forEach((t) => t.kill())
-      }
+      cleanup = () => ScrollTrigger.getAll().forEach((t) => t.kill())
     }
 
     initGSAP()
 
     return () => {
-      video.removeEventListener('loadedmetadata', handleLoaded)
+      video.removeEventListener('loadedmetadata', onLoaded)
+      window.removeEventListener('touchstart', unlock)
       cleanup?.()
     }
-  }, [mounted, isIOS])
+  }, [mounted])
 
   if (!mounted) {
     return (
@@ -73,24 +79,6 @@ export function ScrollHero() {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/video/hero-poster.jpg)' }}
         />
-      </section>
-    )
-  }
-
-  if (isIOS) {
-    return (
-      <section ref={sectionRef} className="relative h-screen overflow-hidden">
-        <video
-          autoPlay
-          muted
-          playsInline
-          loop
-          poster="/video/hero-poster.jpg"
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/video/hero-mobile.mp4" type="video/mp4" />
-        </video>
-        <HeroOverlay containerRef={sectionRef} />
       </section>
     )
   }
@@ -106,8 +94,8 @@ export function ScrollHero() {
           poster="/video/hero-poster.jpg"
           className="w-full h-full object-cover"
         >
+          <source src="/video/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)" />
           <source src="/video/hero-desktop.mp4" type="video/mp4" />
-          <source src="/video/hero-mobile.mp4" type="video/mp4" />
         </video>
       </div>
       <HeroOverlay containerRef={sectionRef} />

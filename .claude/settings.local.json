@@ -3,7 +3,12 @@
     "allow": [
       "Read(//usr/local/bin/**)",
       "Read(//opt/homebrew/bin/**)",
-      "Read(//Users/shayannk/.nvm/**)"
+      "Read(//Users/shayannk/.nvm/**)",
+      "Bash(/opt/homebrew/bin/ffmpeg -y -i hero-mobile.mp4 -c:v libx264 -crf 20 -preset medium -g 15 -keyint_min 15 -sc_threshold 0 -vf \"scale=1080:608\" -movflags +faststart -an hero-mobile-hq.mp4)",
+      "Bash(/opt/homebrew/bin/npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
