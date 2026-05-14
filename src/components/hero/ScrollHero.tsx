@@ -41,11 +41,14 @@ export function ScrollHero() {
         trigger: sectionRef.current,
         start: 'top top',
         end: '+=600%',
-        scrub: 1,
+        scrub: true,
         pin: true,
         onUpdate: (self) => {
           if (video.duration && !isNaN(video.duration)) {
-            video.currentTime = video.duration * self.progress
+            const target = video.duration * self.progress
+            if (Math.abs(video.currentTime - target) > 0.033) {
+              video.currentTime = target
+            }
           }
         },
       })

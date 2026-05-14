@@ -1,51 +1,60 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Product } from '@/lib/products'
-
-const thumbnails = ['Front View', 'Side View', 'Detail']
 
 interface ProductGalleryProps {
   product: Product
 }
+
+const views = ['front', 'angle', 'close']
 
 export function ProductGallery({ product }: ProductGalleryProps) {
   const [activeIdx, setActiveIdx] = useState(0)
 
   return (
     <div className="space-y-4">
+      {/* Main image */}
       <div
-        className="aspect-square rounded-2xl flex items-center justify-center"
-        style={{ backgroundColor: `${product.hex}20` }}
+        className="aspect-square rounded-2xl overflow-hidden relative"
+        style={{ backgroundColor: `${product.hex}15` }}
       >
-        <div className="text-center">
-          <div
-            className="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg"
-            style={{ backgroundColor: product.hex }}
-          />
-          <p className="font-sans text-xs text-charcoal/40">{thumbnails[activeIdx]}</p>
-        </div>
+        <Image
+          src={product.image}
+          alt={`${product.name} — ${views[activeIdx]} view`}
+          fill
+          className="object-contain p-10"
+          sizes="(max-width: 1024px) 90vw, 50vw"
+          priority
+        />
       </div>
+
+      {/* Thumbnails */}
       <div className="flex gap-3">
-        {thumbnails.map((label, i) => (
+        {views.map((view, i) => (
           <button
-            key={i}
+            key={view}
             onClick={() => setActiveIdx(i)}
-            aria-label={label}
-            className={clsx(
-              'flex-1 aspect-square rounded-xl flex items-center justify-center transition-all cursor-pointer',
-              activeIdx === i ? 'ring-2 ring-charcoal' : 'opacity-50 hover:opacity-75'
-            )}
-            style={{ backgroundColor: `${product.hex}30` }}
+            aria-label={`${view} view`}
+            className={[
+              'flex-1 aspect-square rounded-xl overflow-hidden relative transition-all cursor-pointer',
+              activeIdx === i
+                ? 'ring-2 ring-charcoal ring-offset-2'
+                : 'opacity-50 hover:opacity-80',
+            ].join(' ')}
+            style={{ backgroundColor: `${product.hex}20` }}
           >
-            <div className="w-8 h-8 rounded-full" style={{ backgroundColor: product.hex }} />
+            <Image
+              src={product.image}
+              alt={`${product.name} thumbnail`}
+              fill
+              className="object-contain p-3"
+              sizes="15vw"
+            />
           </button>
         ))}
       </div>
     </div>
   )
-}
-
-function clsx(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ')
 }
