@@ -11,8 +11,6 @@ export const metadata: Metadata = {
   title: 'Shop',
 }
 
-const filterChips = ['all', 'rose', 'teal', 'lavender', 'navy', 'forest']
-
 export default function ShopPage() {
   return (
     <>
@@ -49,18 +47,6 @@ export default function ShopPage() {
 
       <Section>
         <Container>
-          {/* Filter chips */}
-          <FadeIn className="flex flex-wrap gap-3 mb-14 justify-center">
-            {filterChips.map((chip, i) => (
-              <button
-                key={chip}
-                className="rounded-full border border-charcoal/20 px-5 py-2 font-sans text-xs uppercase tracking-[0.15em] text-charcoal/60 hover:border-charcoal hover:text-charcoal transition-all cursor-pointer first:bg-charcoal first:text-cream first:border-charcoal"
-              >
-                {chip}
-              </button>
-            ))}
-          </FadeIn>
-
           {/* Product grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8">
             {products.map((product, i) => (
