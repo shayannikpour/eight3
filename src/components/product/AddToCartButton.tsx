@@ -1,22 +1,14 @@
-'use client'
-
-import { useState } from 'react'
+import Link from 'next/link'
+import { MapPin } from 'lucide-react'
 
 export function AddToCartButton() {
-  const [added, setAdded] = useState(false)
-
-  const handleClick = () => {
-    setAdded(true)
-    setTimeout(() => setAdded(false), 2500)
-    // TODO: connect to Shopify or similar cart system
-  }
-
   return (
-    <button
-      onClick={handleClick}
-      className="inline-flex items-center justify-center rounded-full bg-charcoal text-cream px-8 py-3 font-sans text-sm tracking-wide hover:bg-forest transition-all duration-300 w-fit cursor-pointer"
+    <Link
+      href="/stores"
+      className="inline-flex items-center gap-2.5 rounded-full bg-charcoal text-cream px-8 py-3.5 font-sans text-sm tracking-wide hover:bg-forest transition-all duration-300 w-fit group"
     >
-      {added ? 'cart coming soon ✓' : 'add to cart'}
-    </button>
+      <MapPin size={15} className="transition-transform duration-300 group-hover:scale-110" />
+      find a store near you
+    </Link>
   )
 }

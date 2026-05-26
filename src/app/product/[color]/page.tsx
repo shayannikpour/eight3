@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: Props) {
               {/* Price */}
               <div className="flex items-baseline gap-3 mb-6">
                 <p className="font-display text-4xl italic text-charcoal">
-                  $TBD {/* TODO: set price */}
+                  {product.price}
                 </p>
                 <p className="font-sans text-xs text-charcoal/40 uppercase tracking-[0.1em]">CAD</p>
               </div>

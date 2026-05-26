@@ -20,15 +20,22 @@ export default function Home() {
     <>
       <ScrollHero />
 
-      {/* Five-color showcase */}
+      {/* ── Lineup ─────────────────────────────────────────────── */}
       <Section id="lineup">
         <Container>
-          <FadeIn className="text-center mb-16">
-            <Eyebrow>the lineup</Eyebrow>
-            <h2 className="font-display text-5xl md:text-7xl italic text-charcoal leading-tight mt-4">
-              five matte finishes
-            </h2>
-          </FadeIn>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-14 gap-6">
+            <FadeIn>
+              <Eyebrow>the lineup</Eyebrow>
+              <h2 className="font-display text-5xl md:text-7xl italic text-charcoal leading-none mt-3">
+                five matte<br />finishes
+              </h2>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <p className="font-sans text-charcoal/50 max-w-xs leading-relaxed text-sm md:text-right">
+                One device. Five deliberate colors. Each shade designed to mark a moment in your day.
+              </p>
+            </FadeIn>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             {products.map((product, i) => (
               <FadeIn key={product.color} delay={i * 0.08}>
@@ -41,66 +48,147 @@ export default function Home() {
 
       <MarqueeTagline />
 
-      {/* All-pens group shot */}
-      <Section className="overflow-hidden">
+      {/* ── Pull-quote band ─────────────────────────────────────── */}
+      <div className="bg-forest overflow-hidden">
         <Container>
-          <FadeIn className="text-center mb-10">
-            <Eyebrow>the collection</Eyebrow>
-            <h2 className="font-display text-4xl md:text-6xl italic text-charcoal leading-tight mt-3">
-              every shade of stillness
-            </h2>
-          </FadeIn>
-          <FadeIn delay={0.15}>
-            <div className="relative w-full max-w-4xl mx-auto aspect-[16/9] rounded-3xl overflow-hidden bg-charcoal/5">
-              <Image
-                src="/images/all-pens.png"
-                alt="All five EIGHT3 pen colors together"
-                fill
-                className="object-contain p-8 md:p-12"
-                sizes="(max-width: 768px) 95vw, 900px"
-              />
-            </div>
-          </FadeIn>
-          <FadeIn delay={0.25} className="text-center mt-10">
-            <Button href="/shop" variant="secondary">shop all colors →</Button>
-          </FadeIn>
-        </Container>
-      </Section>
-
-      {/* Editorial split */}
-      <Section className="border-t border-charcoal/8">
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-16 items-center">
+          <div className="py-20 md:py-28 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <FadeIn direction="right">
-              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-charcoal/5">
+              <p className="font-sans text-xs uppercase tracking-[0.2em] text-cream/40 mb-6">
+                the philosophy
+              </p>
+              <blockquote className="font-display text-3xl md:text-5xl italic text-cream leading-snug">
+                "We built EIGHT3 for people who already know what they need — they just needed
+                a device worthy of the ritual."
+              </blockquote>
+            </FadeIn>
+            <FadeIn direction="left" delay={0.12}>
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden hidden lg:block">
                 <Image
-                  src="/images/lifestyle-3.jpg"
-                  alt="EIGHT3 pen lifestyle"
+                  src="/images/lifestyle-2.jpg"
+                  alt="EIGHT3 pen in hand"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 1024px) 95vw, 50vw"
+                  sizes="50vw"
                 />
+                {/* Tint overlay */}
+                <div className="absolute inset-0 bg-forest/30" />
               </div>
             </FadeIn>
-            <FadeIn direction="left" className="lg:pl-4">
-              <Eyebrow className="mb-4">the ritual</Eyebrow>
-              <h2 className="font-display text-4xl md:text-5xl italic text-charcoal leading-tight mb-6">
-                engineered<br />for stillness
+          </div>
+        </Container>
+      </div>
+
+      {/* ── All pens group shot ─────────────────────────────────── */}
+      <Section className="overflow-hidden">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-10 lg:gap-20 items-center">
+            <FadeIn direction="right">
+              <Eyebrow className="mb-4">the collection</Eyebrow>
+              <h2 className="font-display text-4xl md:text-6xl italic text-charcoal leading-tight mb-6">
+                every shade<br />of stillness
               </h2>
-              <p className="font-sans text-charcoal/70 leading-relaxed mb-4">
-                EIGHT3 was born from the belief that a tool should feel like a ceremony. Each pen is
-                weighted to rest in the palm, the draw calibrated to slow the breath rather than hasten it.
+              <p className="font-sans text-charcoal/60 leading-relaxed mb-8 max-w-xs">
+                Rose. Teal. Lavender. Navy. Forest. Five colors chosen not for trend — for time of day.
               </p>
-              <p className="font-sans text-charcoal/70 leading-relaxed mb-8">
-                Five colors. One intention. A single ritual that begins the moment you choose your shade.
-              </p>
-              <Button href="/ritual" variant="secondary">read the ritual →</Button>
+              <Button href="/shop" variant="secondary">shop all colors →</Button>
+            </FadeIn>
+            <FadeIn direction="left" delay={0.1}>
+              <div className="relative w-full aspect-[16/10] rounded-3xl overflow-hidden bg-charcoal/5">
+                <Image
+                  src="/images/all-pens.png"
+                  alt="All five EIGHT3 pen colors together"
+                  fill
+                  className="object-contain p-6 md:p-10"
+                  sizes="(max-width: 1024px) 95vw, 65vw"
+                />
+              </div>
             </FadeIn>
           </div>
         </Container>
       </Section>
 
-      {/* Feature spotlight — dark band */}
+      {/* ── Lifestyle triptych ──────────────────────────────────── */}
+      <Section className="border-t border-charcoal/8 overflow-hidden">
+        <Container>
+          <FadeIn className="mb-10">
+            <Eyebrow>the ritual</Eyebrow>
+          </FadeIn>
+          <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.9fr_1fr] gap-4 md:gap-5">
+            {/* Tall left panel */}
+            <FadeIn direction="right" className="relative aspect-[3/4] rounded-2xl overflow-hidden">
+              <Image
+                src="/images/lifestyle-3.jpg"
+                alt="EIGHT3 ritual moment"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 95vw, 40vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 to-transparent" />
+              <div className="absolute bottom-6 left-6">
+                <p className="font-display text-2xl italic text-cream">engineered for stillness</p>
+              </div>
+            </FadeIn>
+
+            {/* Middle: text card + small image */}
+            <div className="flex flex-col gap-4">
+              <FadeIn delay={0.08} className="flex-1 bg-charcoal rounded-2xl p-8 flex flex-col justify-between">
+                <p className="font-sans text-xs uppercase tracking-[0.2em] text-cream/40">precision</p>
+                <div>
+                  <p className="font-display text-4xl italic text-cream mb-3">4.2V</p>
+                  <p className="font-sans text-sm text-cream/60 leading-relaxed">
+                    Three voltage modes, OLED puff counter, USB-C fast charge.
+                  </p>
+                </div>
+                <Link
+                  href="/ritual"
+                  className="font-sans text-xs uppercase tracking-[0.15em] text-cream/50 hover:text-cream transition-colors mt-4 inline-block"
+                >
+                  read the ritual →
+                </Link>
+              </FadeIn>
+              <FadeIn delay={0.12} className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+                <Image
+                  src="/images/lifestyle-1.png"
+                  alt="EIGHT3 detail shot"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 95vw, 30vw"
+                />
+              </FadeIn>
+            </div>
+
+            {/* Right: spec list */}
+            <FadeIn direction="left" delay={0.16} className="flex flex-col justify-between">
+              <div
+                className="aspect-[3/4] rounded-2xl overflow-hidden relative mb-4"
+                style={{ backgroundColor: `${products[2].hex}22` }}
+              >
+                <Image
+                  src={products[2].image}
+                  alt="EIGHT3 Lavender"
+                  fill
+                  className="object-contain p-10"
+                  sizes="(max-width: 768px) 95vw, 33vw"
+                />
+              </div>
+              <div className="space-y-3 border-t border-charcoal/10 pt-5">
+                {[
+                  { k: '510-thread', v: 'universal compatibility' },
+                  { k: 'OLED display', v: 'battery + session tracking' },
+                  { k: 'USB-C', v: 'full charge in 2 hours' },
+                ].map((s) => (
+                  <div key={s.k} className="flex justify-between items-baseline">
+                    <p className="font-sans text-xs font-medium text-charcoal">{s.k}</p>
+                    <p className="font-sans text-xs text-charcoal/40 text-right max-w-[55%]">{s.v}</p>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+        </Container>
+      </Section>
+
+      {/* ── Feature spotlight — dark band ───────────────────────── */}
       <Section className="bg-charcoal overflow-hidden">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
@@ -131,7 +219,7 @@ export default function Home() {
               </FadeIn>
             </div>
             <FadeIn direction="left" className="order-1 lg:order-2">
-              <div className="relative aspect-square rounded-2xl overflow-hidden">
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
                 <Image
                   src="/images/lifestyle-1.png"
                   alt="EIGHT3 pen detail"
@@ -145,13 +233,13 @@ export default function Home() {
         </Container>
       </Section>
 
-      {/* Color feature row */}
+      {/* ── Color swatch grid ───────────────────────────────────── */}
       <Section>
         <Container>
-          <FadeIn className="text-center mb-14">
+          <FadeIn className="mb-14">
             <Eyebrow>five moods</Eyebrow>
             <h2 className="font-display text-4xl md:text-5xl italic text-charcoal leading-tight mt-4">
-              the color is the ritual
+              the color is<br />the ritual
             </h2>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-px bg-charcoal/8 rounded-2xl overflow-hidden">
@@ -162,11 +250,12 @@ export default function Home() {
                   className="group flex flex-col items-center py-10 px-4 bg-cream hover:bg-charcoal/3 transition-colors duration-300 text-center"
                 >
                   <div
-                    className="w-14 h-14 rounded-full mb-5 transition-transform duration-300 group-hover:scale-110"
+                    className="w-14 h-14 rounded-full mb-5 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
                     style={{ backgroundColor: product.hex }}
                   />
                   <p className="font-display text-lg italic text-charcoal mb-1">{product.name}</p>
-                  <p className="font-sans text-xs text-charcoal/40 tracking-wide">{product.mood}</p>
+                  <p className="font-sans text-xs text-charcoal/40 tracking-wide mb-2">{product.mood}</p>
+                  <p className="font-sans text-xs text-charcoal/60">{product.price}</p>
                 </Link>
               </FadeIn>
             ))}
@@ -174,25 +263,24 @@ export default function Home() {
         </Container>
       </Section>
 
-      {/* Specs strip */}
-      <Section className="border-y border-charcoal/10">
+      {/* ── Find a store strip ──────────────────────────────────── */}
+      <div className="border-y border-charcoal/10">
         <Container>
-          <FadeInGroup className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center" staggerDelay={0.12}>
-            {[
-              { label: '4.2V variable', sub: 'three draw modes for every cartridge' },
-              { label: '1000 puff counter', sub: 'track your session, return to stillness' },
-              { label: 'USB-C, 2hr charge', sub: 'ready when you are' },
-            ].map((spec) => (
-              <div key={spec.label} className="space-y-2">
-                <p className="font-display text-3xl italic text-forest">{spec.label}</p>
-                <p className="font-sans text-sm text-charcoal/60">{spec.sub}</p>
+          <FadeIn>
+            <div className="py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div>
+                <p className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/40 mb-1">availability</p>
+                <p className="font-display text-2xl md:text-3xl italic text-charcoal">
+                  20 stores across British Columbia
+                </p>
               </div>
-            ))}
-          </FadeInGroup>
+              <Button href="/stores" variant="secondary">find a store →</Button>
+            </div>
+          </FadeIn>
         </Container>
-      </Section>
+      </div>
 
-      {/* Quiet CTA */}
+      {/* ── Quiet CTA ───────────────────────────────────────────── */}
       <Section>
         <Container>
           <FadeIn className="text-center">
