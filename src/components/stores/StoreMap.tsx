@@ -10,28 +10,7 @@ interface StoreMapProps {
   onMarkerClick?: (store: Store) => void
 }
 
-function getView(stores: Store[]): { center: [number, number]; zoom: number } {
-  if (stores.length === 0) return { center: [49.28, -123.12], zoom: 11 }
-
-  const lats = stores.map((s) => s.lat)
-  const lngs = stores.map((s) => s.lng)
-  const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2
-  const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2
-  const spread = Math.max(
-    Math.max(...lats) - Math.min(...lats),
-    Math.max(...lngs) - Math.min(...lngs)
-  )
-
-  let zoom = 13
-  if (spread > 5) zoom = 7
-  else if (spread > 1) zoom = 9
-  else if (spread > 0.3) zoom = 12
-  else zoom = 14
-
-  return { center: [centerLat, centerLng], zoom }
-}
-
-function pinSvg(active: boolean) {
+function pinHtml(active: boolean) {
   const fill = active ? '#D4A574' : '#1D4031'
   return `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">
     <path d="M14 0C6.27 0 0 6.27 0 14c0 9.625 14 22 14 22S28 23.625 28 14C28 6.27 21.73 0 14 0z" fill="${fill}"/>
@@ -43,21 +22,20 @@ export function StoreMap({ stores, activeStore, onMarkerClick }: StoreMapProps) 
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<LMap | null>(null)
   const markersRef = useRef<Marker[]>([])
-  // Always-current callback ref — avoids stale closures without re-creating markers
-  const onMarkerClickRef = useRef(onMarkerClick)
-  useEffect(() => { onMarkerClickRef.current = onMarkerClick })
+  // Always-current ref so marker click handlers never go stale
+  const callbackRef = useRef(onMarkerClick)
+  useEffect(() => { callbackRef.current = onMarkerClick })
 
-  // ── Init map once ─────────────────────────────────────────────
   useEffect(() => {
-    if (mapRef.current || !containerRef.current) return
-
+    if (!containerRef.current) return
     let cancelled = false
 
     ;(async () => {
+      // ── Load Leaflet (cached after first import) ──────────────
       const L = (await import('leaflet')).default
-      if (cancelled || !containerRef.current || mapRef.current) return
+      if (cancelled || !containerRef.current) return
 
-      // Fix webpack-broken default icon URLs
+      // Fix Webpack stripping the default icon URLs
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (L.Icon.Default.prototype as any)._getIconUrl
       L.Icon.Default.mergeOptions({
@@ -66,54 +44,36 @@ export function StoreMap({ stores, activeStore, onMarkerClick }: StoreMapProps) 
         shadowUrl:     'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       })
 
-      // Start at Vancouver — markers effect will reposition immediately after
-      const map = L.map(containerRef.current, {
-        center: [49.28, -123.12],
-        zoom: 12,
-        zoomControl: true,
-        scrollWheelZoom: false,
-      })
+      // ── Create map once ───────────────────────────────────────
+      if (!mapRef.current) {
+        mapRef.current = L.map(containerRef.current, {
+          center: [49.28, -123.12],
+          zoom: 12,
+          zoomControl: true,
+          scrollWheelZoom: false,
+        })
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap contributors',
+        }).addTo(mapRef.current)
+      }
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors',
-      }).addTo(map)
-
-      mapRef.current = map
-      // Trigger marker placement now that the map exists
-      placeMarkersRef.current?.()
-    })()
-
-    return () => { cancelled = true }
-  // run once only
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // ── Stable marker-placement function stored in a ref ─────────
-  // This lets the init effect call it as soon as the map is ready,
-  // AND the stores/activeStore effect calls it whenever data changes.
-  const placeMarkersRef = useRef<(() => void) | null>(null)
-
-  useEffect(() => {
-    placeMarkersRef.current = async () => {
       const map = mapRef.current
-      if (!map) return
 
-      const L = (await import('leaflet')).default
-
-      // Remove previous markers
+      // ── Remove old markers ────────────────────────────────────
       markersRef.current.forEach((m) => m.remove())
       markersRef.current = []
 
-      if (stores.length === 0) return
+      if (stores.length === 0 || cancelled) return
 
+      // ── Add fresh markers ─────────────────────────────────────
       const makeIcon = (active: boolean) =>
         L.divIcon({
-          html: pinSvg(active),
+          html: pinHtml(active),
           className: '',
-          iconSize: [28, 36],
+          iconSize:   [28, 36],
           iconAnchor: [14, 36],
-          popupAnchor: [0, -40],
+          popupAnchor:[0, -40],
         })
 
       stores.forEach((store) => {
@@ -131,39 +91,34 @@ export function StoreMap({ stores, activeStore, onMarkerClick }: StoreMapProps) 
         )
 
         marker.on('click', () => {
-          onMarkerClickRef.current?.(store)
+          callbackRef.current?.(store)
         })
 
         marker.addTo(map)
         if (isActive) marker.openPopup()
-
         markersRef.current.push(marker)
       })
 
-      // Fit view to current store set
-      const { center, zoom } = getView(stores)
-      map.setView(center, zoom, { animate: true, duration: 0.5 })
-    }
+      // ── Fit viewport to the current set of stores ─────────────
+      // Use fitBounds — Leaflet calculates the right center + zoom
+      const bounds = L.latLngBounds(stores.map((s) => [s.lat, s.lng] as [number, number]))
+      map.fitBounds(bounds, { padding: [48, 48], maxZoom: 14, animate: true })
+    })()
 
-    // Run immediately if map already exists (data changed after init)
-    placeMarkersRef.current()
-  }, [stores, activeStore])
+    return () => { cancelled = true }
+  }, [stores, activeStore]) // re-run whenever the displayed stores change
 
-  // ── Destroy on unmount ────────────────────────────────────────
-  useEffect(() => {
-    return () => {
-      mapRef.current?.remove()
-      mapRef.current = null
-    }
+  // Destroy on unmount
+  useEffect(() => () => {
+    mapRef.current?.remove()
+    mapRef.current = null
   }, [])
 
   return (
     <>
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        crossOrigin=""
-      />
+      {/* Load Leaflet CSS from CDN — must come before the map div */}
+      {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
       <div ref={containerRef} className="w-full h-full" />
     </>
   )
