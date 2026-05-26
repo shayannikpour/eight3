@@ -59,7 +59,7 @@ function SceneOverlay({
   )
 }
 
-export function HeroOverlay({ containerRef }: { containerRef: React.RefObject<HTMLElement | null> }) {
+export function HeroOverlay({ containerRef }: { containerRef: React.RefObject<HTMLDivElement | null> }) {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],

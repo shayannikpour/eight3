@@ -1,31 +1,27 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
+import { useScroll } from 'framer-motion'
 import { HeroOverlay } from './HeroOverlay'
 
 export function ScrollHero() {
-  const sectionRef = useRef<HTMLElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [mounted, setMounted] = useState(false)
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  })
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!mounted) return
     const video = videoRef.current
     if (!video) return
 
     video.load()
-
-    const onLoaded = () => {
-      video.currentTime = 0
-    }
+    const onLoaded = () => { video.currentTime = 0 }
     video.addEventListener('loadedmetadata', onLoaded)
 
-    // iOS Safari blocks seeking until after a user-gesture play() call.
-    // We listen for the first touch and briefly play+pause to unlock seeking.
+    // iOS Safari: unlock seeking on first touch
     let unlocked = false
     const unlock = () => {
       if (unlocked) return
@@ -37,68 +33,41 @@ export function ScrollHero() {
     }
     window.addEventListener('touchstart', unlock, { once: true, passive: true })
 
-    let cleanup: (() => void) | undefined
-
-    const initGSAP = async () => {
-      const gsap = (await import('gsap')).default
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger')
-      gsap.registerPlugin(ScrollTrigger)
-
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=600%',
-        scrub: true,
-        pin: true,
-        onUpdate: (self) => {
-          if (video.duration && !isNaN(video.duration)) {
-            const target = video.duration * self.progress
-            if (Math.abs(video.currentTime - target) > 0.033) {
-              video.currentTime = target
-            }
-          }
-        },
-      })
-
-      cleanup = () => ScrollTrigger.getAll().forEach((t) => t.kill())
-    }
-
-    initGSAP()
+    // Drive video time from scroll progress
+    const unsubscribe = scrollYProgress.on('change', (progress) => {
+      if (video.duration && !isNaN(video.duration)) {
+        const target = video.duration * progress
+        if (Math.abs(video.currentTime - target) > 0.033) {
+          video.currentTime = target
+        }
+      }
+    })
 
     return () => {
       video.removeEventListener('loadedmetadata', onLoaded)
       window.removeEventListener('touchstart', unlock)
-      cleanup?.()
+      unsubscribe()
     }
-  }, [mounted])
-
-  if (!mounted) {
-    return (
-      <section className="relative h-screen overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url(/video/hero-poster.jpg)' }}
-        />
-      </section>
-    )
-  }
+  }, [scrollYProgress])
 
   return (
-    <section ref={sectionRef} className="relative" style={{ height: '100vh' }}>
-      <div className="absolute inset-0">
+    // 600vh tall container drives the scroll distance
+    <div ref={containerRef} style={{ height: '600vh' }}>
+      {/* CSS sticky — browser-native, React never loses track of the DOM node */}
+      <div className="sticky top-0 h-screen overflow-hidden">
         <video
           ref={videoRef}
           muted
           playsInline
           preload="auto"
           poster="/video/hero-poster.jpg"
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
         >
           <source src="/video/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)" />
           <source src="/video/hero-desktop.mp4" type="video/mp4" />
         </video>
+        <HeroOverlay containerRef={containerRef} />
       </div>
-      <HeroOverlay containerRef={sectionRef} />
-    </section>
+    </div>
   )
 }
