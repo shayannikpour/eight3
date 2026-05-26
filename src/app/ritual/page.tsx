@@ -133,15 +133,15 @@ export default function RitualPage() {
                 <FadeIn direction={index % 2 === 0 ? 'left' : 'right'} className={index % 2 === 1 ? 'lg:col-start-2' : ''}>
                   {scene.product ? (
                     <div
-                      className="aspect-square rounded-2xl flex items-center justify-center"
-                      style={{ backgroundColor: `${scene.product.hex}18` }}
+                      className="aspect-square rounded-2xl relative overflow-hidden"
+                      style={{ backgroundColor: `${scene.product.hex}22` }}
                     >
                       <Image
                         src={scene.product.image}
                         alt={scene.product.name}
-                        width={400}
-                        height={400}
-                        className="object-contain p-12 w-full h-full"
+                        fill
+                        className="object-contain p-16 mix-blend-multiply"
+                        sizes="(max-width: 1024px) 90vw, 50vw"
                       />
                     </div>
                   ) : (

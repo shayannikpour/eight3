@@ -8,7 +8,6 @@ import { Eyebrow } from '@/components/ui/Eyebrow'
 import { Button } from '@/components/ui/Button'
 import { FadeIn } from '@/components/ui/FadeIn'
 import { ColorPicker } from '@/components/product/ColorPicker'
-import { ProductGallery } from '@/components/product/ProductGallery'
 import { Specs } from '@/components/product/Specs'
 import { AddToCartButton } from '@/components/product/AddToCartButton'
 import { getProduct, products, ProductColor } from '@/lib/products'
@@ -42,7 +41,19 @@ export default async function ProductPage({ params }: Props) {
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 py-16">
             <FadeIn direction="right">
-              <ProductGallery product={product} />
+              <div
+                className="aspect-square rounded-2xl overflow-hidden relative"
+                style={{ backgroundColor: `${product.hex}22` }}
+              >
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-16 mix-blend-multiply"
+                  sizes="(max-width: 1024px) 90vw, 50vw"
+                  priority
+                />
+              </div>
             </FadeIn>
 
             <FadeIn direction="left" className="flex flex-col justify-center">
