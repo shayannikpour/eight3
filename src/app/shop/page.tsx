@@ -37,7 +37,7 @@ export default function ShopPage() {
                   src="/images/all-pens.png"
                   alt="All five EIGHT3 colors"
                   fill
-                  className="object-contain p-8"
+                  className="object-contain p-8 mix-blend-multiply"
                   sizes="50vw"
                   priority
                 />

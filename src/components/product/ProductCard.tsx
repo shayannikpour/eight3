@@ -22,7 +22,7 @@ export function ProductCard({ product }: ProductCardProps) {
             src={product.image}
             alt={product.name}
             fill
-            className="object-contain p-8 transition-transform duration-500 group-hover:scale-105"
+            className="object-contain p-8 transition-transform duration-500 group-hover:scale-105 mix-blend-multiply"
             sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 20vw"
           />
           {/* subtle color wash on hover */}

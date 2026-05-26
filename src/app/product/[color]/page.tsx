@@ -113,7 +113,7 @@ export default async function ProductPage({ params }: Props) {
                   alt={product.name}
                   width={320}
                   height={400}
-                  className="object-contain p-12 w-full h-full"
+                  className="object-contain p-12 w-full h-full mix-blend-multiply"
                 />
               </div>
             </FadeIn>
@@ -146,7 +146,7 @@ export default async function ProductPage({ params }: Props) {
                     className="aspect-square rounded-xl overflow-hidden relative mb-3 transition-transform duration-300 group-hover:-translate-y-1"
                     style={{ backgroundColor: `${p.hex}20` }}
                   >
-                    <Image src={p.image} alt={p.name} fill className="object-contain p-6" sizes="25vw" />
+                    <Image src={p.image} alt={p.name} fill className="object-contain p-6 mix-blend-multiply" sizes="25vw" />
                   </div>
                   <p className="font-display italic text-charcoal text-base">{p.name}</p>
                   <p className="font-sans text-xs text-charcoal/40 mt-0.5">{p.mood}</p>

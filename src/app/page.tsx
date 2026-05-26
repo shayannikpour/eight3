@@ -98,7 +98,7 @@ export default function Home() {
                   src="/images/all-pens.png"
                   alt="All five EIGHT3 pen colors together"
                   fill
-                  className="object-contain p-6 md:p-10"
+                  className="object-contain p-6 md:p-10 mix-blend-multiply"
                   sizes="(max-width: 1024px) 95vw, 65vw"
                 />
               </div>
@@ -167,7 +167,7 @@ export default function Home() {
                   src={products[2].image}
                   alt="EIGHT3 Lavender"
                   fill
-                  className="object-contain p-10"
+                  className="object-contain p-10 mix-blend-multiply"
                   sizes="(max-width: 768px) 95vw, 33vw"
                 />
               </div>

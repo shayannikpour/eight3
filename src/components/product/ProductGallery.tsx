@@ -24,7 +24,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
           src={product.image}
           alt={`${product.name} — ${views[activeIdx]} view`}
           fill
-          className="object-contain p-10"
+          className="object-contain p-10 mix-blend-multiply"
           sizes="(max-width: 1024px) 90vw, 50vw"
           priority
         />
@@ -49,7 +49,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               src={product.image}
               alt={`${product.name} thumbnail`}
               fill
-              className="object-contain p-3"
+              className="object-contain p-3 mix-blend-multiply"
               sizes="15vw"
             />
           </button>
